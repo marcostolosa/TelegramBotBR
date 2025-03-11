@@ -1,0 +1,9 @@
+# folders
+__pycache__/
+envTestes/
+
+# files
+.env
+payments.db
+bot_payments.log
+teste2.py
