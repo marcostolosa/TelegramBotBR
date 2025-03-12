@@ -1,0 +1,6 @@
+.env
+payments.db
+bot_payments.log
+
+telBot/
+__pycache__/

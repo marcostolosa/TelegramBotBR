@@ -1,0 +1,9 @@
+# requirements.txt (atualizado)
+mercadopago
+pyTelegramBotAPI==4.17.0
+python-dotenv
+SQLAlchemy
+streamlit
+pandas
+pytest
+matplotlib
