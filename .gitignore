@@ -1,6 +1,7 @@
 .env
 payments.db
 bot_payments.log
+mel.jfif
 
 telBot/
 __pycache__/

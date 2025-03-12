@@ -19,7 +19,7 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[logging.FileHandler("bot_payments.log", encoding='utf-8'), logging.StreamHandler()]
 )
-logger = logging.getLogger('MercadoPagoBot')
+logger = logging.getLogger('TelegramBot')
 
 sdk = mercadopago.SDK(MP_ACCESS_TOKEN)
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
@@ -34,8 +34,8 @@ def cmd_start(message):
 
     mensagem = (
         f"🔥 Olá, {first_name}! 🔥\n\n"
-        "Aproveite nossa oferta exclusiva por tempo limitado! 🚀\n"
-        "Escolha seu pack agora e libere benefícios incríveis:\n\n"
+        "Aproveite a oferta exclusiva por tempo limitado! 🚀\n"
+        "Escolha seu pack agora e ganhe brindes exclusivos:\n\n"
         "💎 VIP - Apenas R$2,50 (Melhor Escolha!)\n"
         "⭐ Premium - R$1,20\n"
         "⚡ Básico - R$0,50"
@@ -49,7 +49,7 @@ def cmd_start(message):
     )
 
     # Envio de imagem de boas-vindas
-    with open('welcome_image.jpg', 'rb') as photo:
+    with open('mel.jfif', 'rb') as photo:
         bot.send_photo(message.chat.id, photo, caption=mensagem, reply_markup=markup)
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith("pack_"))
@@ -66,21 +66,21 @@ def handle_pack_selection(call):
         pix_code = payment['response']['point_of_interaction']['transaction_data']['qr_code']
         payment_id = payment['response']['id']
 
-        db_manager.save_payment(payment_id, user_id, username, message.chat.id, pack_type=pack_type, pix_code=pix_code)
+        db_manager.save_payment(payment_id, user_id, username, call.message.chat.id, pack_type=pack_type, pix_code=pix_code)
 
         mensagem_pagamento = (
-            "🚀 Seu pagamento está quase pronto! 🚀\n\n"
-            "✨ Quanto antes você pagar, mais rápido aproveita seus benefícios! ✨"
+            "🚀 Seu pagamento está sendo processado! 🚀\n\n"
+            "✨ Quanto antes você pagar, mais rápido aproveita! ✨"
         )
 
         markup = types.InlineKeyboardMarkup()
         markup.add(types.InlineKeyboardButton("✅ Verificar Pagamento", callback_data=f"verify_{payment_id}"))
 
-        bot.send_message(message.chat.id, mensagem_pagamento)
-        bot.send_message(message.chat.id, f"`{pix_code}`", parse_mode="Markdown")
-        bot.send_message(message.chat.id, "👆 Copie o código PIX acima para realizar o pagamento.", reply_markup=markup)
+        bot.send_message(call.message.chat.id, mensagem_pagamento)
+        bot.send_message(call.message.chat.id, f"`{pix_code}`", parse_mode="Markdown")
+        bot.send_message(call.message.chat.id, "👆 Copie o código PIX acima para realizar o pagamento.", reply_markup=markup)
     else:
-        bot.send_message(message.chat.id, "⚠️ Algo deu errado, tente novamente!")
+        bot.send_message(call.message.chat.id, "⚠️ Algo deu errado, tente novamente!")
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith("verify_"))
 def handle_payment_verification(call):
@@ -89,7 +89,7 @@ def handle_payment_verification(call):
 
     if status == 'approved':
         db_manager.update_payment_status(payment_id, status)
-        bot.send_message(call.message.chat.id, "🎉 Pagamento aprovado! Aproveite seu pack!")
+        bot.send_message(call.message.chat.id, "🎉 Pagamento aprovado! Aproveite:")
     elif status == 'pending':
         bot.send_message(call.message.chat.id, "⏳ Ainda estamos aguardando seu pagamento, tente novamente em alguns minutos.")
     else:

@@ -55,6 +55,7 @@ st.dataframe(filtered_df)
 
 # Converter coluna "Expira em" para datetime
 df_active["Expira em"] = pd.to_datetime(df_active["Expira em"])
+filtered_df = df_active[df_active["Pack"].isin(pack_filter)].copy()
 filtered_df["Expira em"] = pd.to_datetime(filtered_df["Expira em"])
 
 # Alertas visuais
